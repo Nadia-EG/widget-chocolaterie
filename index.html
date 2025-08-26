@@ -1,255 +1,1104 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tableau de Bord - Espèce de Ganache</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 20px;
-      margin: 0;
-    }
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      overflow: hidden;
-    }
-    header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 30px;
-      text-align: center;
-    }
-    header h1 { font-size: 2.5em; margin-bottom: 10px; }
-    .tabs { display: flex; background: #f0f0f0; border-bottom: 3px solid #667eea; }
-    .tab {
-      flex: 1; padding: 20px; text-align: center;
-      cursor: pointer; background: #f8f9fa; border: none;
-      font-size: 16px; font-weight: 600; color: #666; transition: all 0.3s;
-    }
-    .tab:hover { background: #e9ecef; }
-    .tab.active { background: white; color: #667eea; border-bottom: 3px solid #667eea; margin-bottom: -3px; }
-    .content { padding: 30px; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.5s; }
-    @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e9ecef; }
-    th { background: #f8f9fa; font-weight: 600; color: #495057; }
-    tr:hover { background: #f8f9fa; }
-    .badge { display:inline-block; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; }
-    .badge-success{background:#d4edda;color:#155724;}
-    .badge-warning{background:#fff3cd;color:#856404;}
-    .badge-danger{background:#f8d7da;color:#721c24;}
-    .badge-info{background:#d1ecf1;color:#0c5460;}
-    .stat-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white; padding: 20px; border-radius: 12px;
-      text-align: center;
-    }
-    .stat-value { font-size: 2em; font-weight: bold; margin-bottom: 5px; }
-    #notification {
-      position: fixed; top: 20px; right: 20px;
-      background: #28a745; color: white;
-      padding: 15px 25px; border-radius: 8px; display: none;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-  </style>
-  <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Espèce de Ganache V2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f0f0f0;
+            border-bottom: 3px solid #8B4513;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background: #e9ecef;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #8B4513;
+            border-bottom: 3px solid #8B4513;
+            margin-bottom: -3px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 600;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #8B4513;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .result-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .result-value {
+            color: #8B4513;
+            font-weight: bold;
+        }
+        
+        .price-simulator {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .simulator-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .range-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .range-input-group input[type="range"] {
+            flex: 1;
+        }
+        
+        .range-value {
+            min-width: 80px;
+            text-align: right;
+            font-weight: bold;
+            color: #8B4513;
+        }
+        
+        .cost-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .cost-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+        }
+        
+        .cost-card-title {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        
+        .cost-card-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .profitability-gauge {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .gauge-bar {
+            height: 40px;
+            background: linear-gradient(to right, #dc3545 0%, #ffc107 30%, #28a745 60%);
+            border-radius: 20px;
+            position: relative;
+            margin: 10px 0;
+        }
+        
+        .gauge-indicator {
+            position: absolute;
+            top: -5px;
+            width: 50px;
+            height: 50px;
+            background: white;
+            border: 3px solid #8B4513;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            transition: left 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .real-time-calc {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .real-time-calc h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .calc-item {
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+        }
+        
+        .calc-item-label {
+            font-size: 11px;
+            color: #6c757d;
+        }
+        
+        .calc-item-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .scenario-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .scenario-btn {
+            flex: 1;
+            padding: 10px;
+            background: white;
+            border: 2px solid #8B4513;
+            color: #8B4513;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .scenario-btn:hover, .scenario-btn.active {
+            background: #8B4513;
+            color: white;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #0c5460;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #155724;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #856404;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #721c24;
+        }
+        
+        #notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            display: none;
+            animation: slideIn 0.5s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
+        }
+        
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .widget-mode {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #8B4513;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .compact-mode .container {
+            max-width: 800px;
+        }
+        
+        .compact-mode .tabs {
+            display: none;
+        }
+        
+        .compact-mode .content {
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>🍫 Espèce de Ganache</h1>
-      <p>Tableau de Bord Gestion Produits & Stocks</p>
-      <p id="dataLoadStatus" style="margin-top:10px;font-size:14px;"></p>
-    </header>
-
-    <div class="tabs">
-      <button class="tab active" onclick="showTab('products', this)">📦 Produits</button>
-      <button class="tab" onclick="showTab('packaging', this)">📋 Emballages</button>
-      <button class="tab" onclick="showTab('materials', this)">🍫 Matières Premières</button>
-    </div>
-
-    <div class="content">
-      <!-- Produits -->
-      <div id="products" class="tab-content active">
-        <h2>Produits Finis</h2>
-        <div class="stats-grid" id="productStats"></div>
-        <div class="table-container">
-          <table id="productsTable">
-            <thead>
-              <tr>
-                <th>Produit</th><th>Famille</th><th>Poids (g)</th>
-                <th>Prix TTC</th><th>Prix/kg</th><th>Marge HT</th><th>Actif</th>
-              </tr>
-            </thead>
-            <tbody id="productsTableBody"><tr><td colspan="7">Chargement...</td></tr></tbody>
-          </table>
+    <div class="container">
+        <header>
+            <h1>🍫 Espèce de Ganache</h1>
+            <p>Calculateur de Prix & Rentabilité V2</p>
+            <p id="dataLoadStatus" style="margin-top: 10px; font-size: 14px;"></p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('calculator')">💰 Calculateur Prix</button>
+            <button class="tab" onclick="showTab('simulator')">📊 Simulateur</button>
+            <button class="tab" onclick="showTab('products')">📦 Produits</button>
+            <button class="tab" onclick="showTab('materials')">🍫 Matières Premières</button>
         </div>
-      </div>
-
-      <!-- Emballages -->
-      <div id="packaging" class="tab-content">
-        <h2>Emballages & Sacs</h2>
-        <div class="stats-grid" id="packagingStats"></div>
-        <h3>📦 Emballages</h3>
-        <table><thead><tr><th>Emballage</th><th>Fournisseur</th><th>Prix HT</th><th>Prix TTC</th><th>Nb Produits</th></tr></thead>
-          <tbody id="packagingTableBody"><tr><td colspan="5">Chargement...</td></tr></tbody></table>
-        <h3 style="margin-top:30px;">🛍️ Sacs</h3>
-        <table><thead><tr><th>Sac</th><th>Fournisseur</th><th>Prix HT</th><th>Prix TTC</th><th>TVA</th></tr></thead>
-          <tbody id="sacsTableBody"><tr><td colspan="5">Chargement...</td></tr></tbody></table>
-      </div>
-
-      <!-- Matières Premières -->
-      <div id="materials" class="tab-content">
-        <h2>Matières Premières</h2>
-        <div class="stats-grid" id="materialsStats"></div>
-        <table>
-          <thead><tr><th>Nom</th><th>Catégorie</th><th>Fournisseur</th><th>Prix/unité TTC</th><th>Stock</th><th>Valeur Stock</th><th>Statut</th></tr></thead>
-          <tbody id="materialsTableBody"><tr><td colspan="7">Chargement...</td></tr></tbody>
-        </table>
-      </div>
+        
+        <div class="content">
+            <!-- Calculateur de Prix Amélioré -->
+            <div id="calculator" class="tab-content active">
+                <h2>💡 Calculateur de Prix Intelligent</h2>
+                
+                <div class="alert alert-info">
+                    💡 Le coût matière est calculé automatiquement selon le poids et le prix au kilo défini
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom du produit</label>
+                        <input type="text" id="prodName" placeholder="Ex: Tablette 70% Orange">
+                    </div>
+                    <div class="form-group">
+                        <label>Famille</label>
+                        <select id="prodFamily">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="Tablettes">Tablettes</option>
+                            <option value="Pralines">Pralines</option>
+                            <option value="Pâtes à tartiner">Pâtes à tartiner</option>
+                            <option value="Mendiants">Mendiants</option>
+                            <option value="Rochers">Rochers</option>
+                            <option value="Barres">Barres</option>
+                            <option value="Truffes">Truffes</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="price-simulator">
+                    <h3>⚙️ Paramètres de Calcul</h3>
+                    
+                    <div class="simulator-controls">
+                        <div class="form-group">
+                            <label>Prix matière première au kg (€ HT)</label>
+                            <div class="range-input-group">
+                                <input type="range" id="prixMatiereKg" min="10" max="50" value="20" step="0.5" 
+                                       oninput="updatePrixMatiere()">
+                                <span class="range-value" id="prixMatiereKgValue">20.00 €</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Poids net du produit (g)</label>
+                            <div class="range-input-group">
+                                <input type="range" id="prodWeight" min="10" max="500" value="100" step="5" 
+                                       oninput="updateCalculations()">
+                                <span class="range-value" id="prodWeightValue">100 g</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="real-time-calc">
+                        <h4>📐 Coût Matière Calculé</h4>
+                        <div class="calc-grid">
+                            <div class="calc-item">
+                                <div class="calc-item-label">Prix/kg HT</div>
+                                <div class="calc-item-value" id="calcPrixKg">20.00 €</div>
+                            </div>
+                            <div class="calc-item">
+                                <div class="calc-item-label">Poids produit</div>
+                                <div class="calc-item-value" id="calcPoids">100 g</div>
+                            </div>
+                            <div class="calc-item">
+                                <div class="calc-item-label">Coût matière HT</div>
+                                <div class="calc-item-value" id="calcCoutMatiere">2.00 €</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label>Emballage principal</label>
+                        <select id="prodEmb1" onchange="updateCalculations()">
+                            <option value="">-- Aucun --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Emballage secondaire</label>
+                        <select id="prodEmb2" onchange="updateCalculations()">
+                            <option value="">-- Aucun --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sac</label>
+                        <select id="prodSac" onchange="updateCalculations()">
+                            <option value="">-- Aucun --</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>TVA (%)</label>
+                        <select id="prodTVA" onchange="updateCalculations()">
+                            <option value="5.5">5.5% (Alimentaire)</option>
+                            <option value="20">20% (Standard)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Prix de vente TTC souhaité (€)</label>
+                        <div class="range-input-group">
+                            <input type="range" id="prodPriceTTC" min="1" max="50" value="10" step="0.5" 
+                                   oninput="updateCalculations()">
+                            <span class="range-value" id="prodPriceTTCValue">10.00 €</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="scenario-buttons">
+                    <button class="scenario-btn" onclick="applyScenario('eco')">💚 Éco</button>
+                    <button class="scenario-btn" onclick="applyScenario('standard')">⭐ Standard</button>
+                    <button class="scenario-btn" onclick="applyScenario('premium')">💎 Premium</button>
+                    <button class="scenario-btn" onclick="applyScenario('luxe')">👑 Luxe</button>
+                </div>
+                
+                <div class="cost-breakdown">
+                    <div class="cost-card">
+                        <div class="cost-card-title">Coût matière</div>
+                        <div class="cost-card-value" id="costMatiere">2.00 €</div>
+                    </div>
+                    <div class="cost-card">
+                        <div class="cost-card-title">Coût emballages</div>
+                        <div class="cost-card-value" id="costEmballages">0.00 €</div>
+                    </div>
+                    <div class="cost-card">
+                        <div class="cost-card-title">Coût total HT</div>
+                        <div class="cost-card-value" id="costTotal">2.00 €</div>
+                    </div>
+                    <div class="cost-card">
+                        <div class="cost-card-title">Prix vente HT</div>
+                        <div class="cost-card-value" id="priceHT">9.48 €</div>
+                    </div>
+                    <div class="cost-card">
+                        <div class="cost-card-title">Marge HT</div>
+                        <div class="cost-card-value" id="margeHT">7.48 €</div>
+                    </div>
+                    <div class="cost-card">
+                        <div class="cost-card-title">Taux de marge</div>
+                        <div class="cost-card-value" id="tauxMarge">78.9%</div>
+                    </div>
+                </div>
+                
+                <div class="profitability-gauge">
+                    <h3>📈 Indicateur de Rentabilité</h3>
+                    <div class="gauge-bar">
+                        <div class="gauge-indicator" id="gaugeIndicator" style="left: 50%;">
+                            <span id="gaugeValue">50%</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                        <span style="color: #dc3545;">Faible</span>
+                        <span style="color: #ffc107;">Correct</span>
+                        <span style="color: #28a745;">Excellent</span>
+                    </div>
+                </div>
+                
+                <div id="recommendations" class="alert alert-warning" style="display: none;">
+                    <h4>💡 Recommandations</h4>
+                    <p id="recommendationText"></p>
+                </div>
+                
+                <button onclick="saveProduct()" style="width: 100%; margin-top: 20px;">
+                    💾 Enregistrer ce produit
+                </button>
+            </div>
+            
+            <!-- Simulateur de Prix -->
+            <div id="simulator" class="tab-content">
+                <h2>📊 Simulateur de Scénarios</h2>
+                
+                <div class="alert alert-info">
+                    Testez différents scénarios de prix pour optimiser votre rentabilité
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Produit de référence</label>
+                        <select id="simProduct">
+                            <option value="tablette">Tablette 100g</option>
+                            <option value="praline">Boîte pralines 200g</option>
+                            <option value="pate">Pâte à tartiner 250g</option>
+                            <option value="rocher">Rochers 150g</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Volume de vente mensuel estimé</label>
+                        <input type="number" id="simVolume" value="100" min="1">
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Scénario</th>
+                                <th>Prix TTC</th>
+                                <th>Marge unit.</th>
+                                <th>CA mensuel</th>
+                                <th>Marge totale</th>
+                                <th>Rentabilité</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scenarioTableBody">
+                            <!-- Rempli dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <canvas id="profitChart" width="400" height="200" style="margin-top: 20px;"></canvas>
+            </div>
+            
+            <!-- Liste des Produits -->
+            <div id="products" class="tab-content">
+                <h2>📦 Catalogue Produits</h2>
+                
+                <div class="search-box">
+                    <input type="text" placeholder="Rechercher un produit..." id="searchProduct" 
+                           onkeyup="filterProducts()">
+                </div>
+                
+                <div class="table-container">
+                    <table id="productsTable">
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Famille</th>
+                                <th>Poids</th>
+                                <th>Prix TTC</th>
+                                <th>Marge</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <!-- Rempli dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Matières Premières -->
+            <div id="materials" class="tab-content">
+                <h2>🍫 Gestion des Matières Premières</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Prix moyen chocolat (€/kg)</label>
+                        <input type="number" id="avgChocolatePrice" value="20" step="0.5" 
+                               onchange="updateMaterialPrices()">
+                    </div>
+                    <div class="form-group">
+                        <label>Ajustement global (%)</label>
+                        <input type="number" id="globalAdjustment" value="0" step="1" 
+                               onchange="updateMaterialPrices()">
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Matière</th>
+                                <th>Catégorie</th>
+                                <th>Prix/kg actuel</th>
+                                <th>Nouveau prix</th>
+                                <th>Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody id="materialsTableBody">
+                            <!-- Rempli dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-
-  <div id="notification"></div>
-
-<script>
-let data = { produits:[], emballages:[], sacs:[], matieres:[] };
-
-function showTab(tabName, el) {
-  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById(tabName).classList.add('active');
-  el.classList.add('active');
-}
-
-function toRows(tableData) {
-  if (Array.isArray(tableData)) return tableData;
-  if (tableData && tableData.id) {
-    const n=tableData.id.length, out=[];
-    const cols=Object.keys(tableData);
-    for(let i=0;i<n;i++){const o={}; for(const c of cols) o[c]=tableData[c][i]; out.push(o);}
-    return out;
-  }
-  return [];
-}
-
-async function loadAllData(){
-  const status=document.getElementById('dataLoadStatus');
-  status.textContent='⏳ Connexion à Grist...';
-  try {
-    grist.ready({ requiredAccess:'full' });
-    const [prod, emb, sacs, mp] = await Promise.all([
-      grist.docApi.fetchTable('Produits_Finis'),
-      grist.docApi.fetchTable('Emballages'),
-      grist.docApi.fetchTable('SACS'),
-      grist.docApi.fetchTable('2_MATIERES_PREMIERES')
-    ]);
-    data.produits=toRows(prod);
-    data.emballages=toRows(emb);
-    data.sacs=toRows(sacs);
-    data.matieres=toRows(mp);
-
-    updateTables();
-    updateStats();
-    status.textContent=`✅ ${data.produits.length} produits, ${data.emballages.length} emballages, ${data.matieres.length} MP chargés`;
-  } catch(e){
-    console.error(e);
-    status.textContent='❌ Erreur: '+e.message;
-  }
-}
-
-function updateTables(){
-  // Produits
-  document.getElementById('productsTableBody').innerHTML =
-    data.produits.map(p=>{
-      const priceKg = p.Poids_Net_g ? (p.Prix_Vente_Unitaire_TTC/(p.Poids_Net_g/1000)) : 0;
-      const marge = p.Marge_Unitaire_HT || 0;
-      const mc = marge>3?'success':marge>1?'warning':'danger';
-      const ac = p.Actif==='Oui'?'success':'warning';
-      return `<tr>
-        <td>${p.Nom_Produit||''}</td>
-        <td><span class="badge badge-info">${p.Famille||''}</span></td>
-        <td>${p.Poids_Net_g||''}</td>
-        <td>${p.Prix_Vente_Unitaire_TTC? p.Prix_Vente_Unitaire_TTC.toFixed(2)+'€':''}</td>
-        <td>${priceKg?priceKg.toFixed(2)+'€':''}</td>
-        <td><span class="badge badge-${mc}">${marge.toFixed(2)}€</span></td>
-        <td><span class="badge badge-${ac}">${p.Actif||'Non'}</span></td>
-      </tr>`;
-    }).join('') || '<tr><td colspan="7">Aucun produit</td></tr>';
-
-  // Emballages
-  document.getElementById('packagingTableBody').innerHTML =
-    data.emballages.map(e=>{
-      const nb = data.produits.filter(p=>p.Nom_Emballage_1===e.Nom_Emballage || p.Nom_Emballage_2===e.Nom_Emballage).length;
-      return `<tr>
-        <td>${e.Nom_Emballage||''}</td>
-        <td>${e.Nom_Fournisseur||''}</td>
-        <td>${e.Prix_Unitaire_HT?e.Prix_Unitaire_HT.toFixed(2)+'€':''}</td>
-        <td>${e.Prix_Unitaire_TTC?e.Prix_Unitaire_TTC.toFixed(2)+'€':''}</td>
-        <td><span class="badge badge-info">${nb}</span></td>
-      </tr>`;
-    }).join('') || '<tr><td colspan="5">Aucun emballage</td></tr>';
-
-  // Sacs
-  document.getElementById('sacsTableBody').innerHTML =
-    data.sacs.map(s=>`
-      <tr>
-        <td>${s.Nom_Sac||''}</td>
-        <td>${s.Nom_Fournisseur||''}</td>
-        <td>${s.Prix_Unitaire_HT||0}€</td>
-        <td>${s.Prix_Unitaire_TTC||0}€</td>
-        <td>${s.TVA_Taux||'20'}%</td>
-      </tr>`).join('') || '<tr><td colspan="5">Aucun sac</td></tr>';
-
-  // Matières premières
-  document.getElementById('materialsTableBody').innerHTML =
-    data.matieres.map(m=>{
-      const sc = m.Statut==='Actif'?'success':'warning';
-      return `<tr>
-        <td>${m.Nom_MP||''}</td>
-        <td>${m.Categorie||''}</td>
-        <td>${m.Fournisseur||''}</td>
-        <td>${m.Prix_Achat_Unitaire_TTC?m.Prix_Achat_Unitaire_TTC.toFixed(2)+'€/'+m.Unite:''}</td>
-        <td>${m.Stock_Actuel||0} ${m.Unite||''}</td>
-        <td>${m.Valeur_Stock?m.Valeur_Stock.toFixed(2)+'€':''}</td>
-        <td><span class="badge badge-${sc}">${m.Statut||''}</span></td>
-      </tr>`;
-    }).join('') || '<tr><td colspan="7">Aucune MP</td></tr>';
-}
-
-function updateStats(){
-  // Produits
-  const actifs=data.produits.filter(p=>p.Actif==='Oui').length;
-  const prixMoyen=data.produits.length? data.produits.reduce((a,p)=>a+(p.Prix_Vente_Unitaire_TTC||0),0)/data.produits.length:0;
-  document.getElementById('productStats').innerHTML=`
-    <div class="stat-card"><div class="stat-value">${data.produits.length}</div><div>Total Produits</div></div>
-    <div class="stat-card"><div class="stat-value">${actifs}</div><div>Produits Actifs</div></div>
-    <div class="stat-card"><div class="stat-value">${prixMoyen.toFixed(2)}€</div><div>Prix Moyen TTC</div></div>`;
-  // Emballages
-  const fU=[...new Set(data.emballages.map(e=>e.Nom_Fournisseur))].length;
-  document.getElementById('packagingStats').innerHTML=`
-    <div class="stat-card"><div class="stat-value">${data.emballages.length}</div><div>Total Emballages</div></div>
-    <div class="stat-card"><div class="stat-value">${data.sacs.length}</div><div>Types de Sacs</div></div>
-    <div class="stat-card"><div class="stat-value">${fU}</div><div>Fournisseurs</div></div>`;
-  // Matières
-  const valeurStock=data.matieres.reduce((a,m)=>a+(m.Valeur_Stock||0),0);
-  const cat=[...new Set(data.matieres.map(m=>m.Categorie))].length;
-  document.getElementById('materialsStats').innerHTML=`
-    <div class="stat-card"><div class="stat-value">${data.matieres.length}</div><div>Références MP</div></div>
-    <div class="stat-card"><div class="stat-value">${cat}</div><div>Catégories</div></div>
-    <div class="stat-card"><div class="stat-value">${(valeurStock/1000).toFixed(1)}k€</div><div>Valeur Stock</div></div>`;
-}
-
-window.onload=loadAllData;
-</script>
+    
+    <div id="notification"></div>
+    
+    <button class="widget-mode" onclick="toggleCompactMode()">
+        📌 Mode Widget
+    </button>
+    
+    <script>
+        // Variables globales
+        let data = {
+            fournisseurs: [],
+            matierespremieres: [],
+            produits: [],
+            emballages: [],
+            sacs: []
+        };
+        
+        let currentProduct = {};
+        let savedProducts = [];
+        
+        // Fonction d'initialisation
+        async function init() {
+            await loadAllData();
+            updateCalculations();
+            generateScenarios();
+        }
+        
+        // Charger les données CSV
+        async function loadAllData() {
+            const status = document.getElementById('dataLoadStatus');
+            status.textContent = '⏳ Chargement des données...';
+            
+            try {
+                // Simuler des données pour la démo
+                // En production, charger depuis les vrais fichiers CSV
+                
+                // Données d'exemple pour emballages
+                data.emballages = [
+                    { Nom_Emballage: "Étui carton simple", Prix_Unitaire_HT: 0.15 },
+                    { Nom_Emballage: "Boîte luxe", Prix_Unitaire_HT: 0.45 },
+                    { Nom_Emballage: "Sachet transparent", Prix_Unitaire_HT: 0.08 },
+                    { Nom_Emballage: "Papier craft", Prix_Unitaire_HT: 0.05 }
+                ];
+                
+                // Données d'exemple pour sacs
+                data.sacs = [
+                    { Nom_Sac: "Sac papier petit", Prix_Unitaire_HT: 0.10 },
+                    { Nom_Sac: "Sac papier moyen", Prix_Unitaire_HT: 0.15 },
+                    { Nom_Sac: "Sac luxe", Prix_Unitaire_HT: 0.35 }
+                ];
+                
+                // Données d'exemple pour produits
+                data.produits = [
+                    { Nom_Produit: "Tablette 70% Orange", Famille: "Tablettes", Poids_Net_g: 100, Prix_Vente_Unitaire_TTC: 8.50, Marge_Unitaire_HT: 5.20 },
+                    { Nom_Produit: "Pralines Assorties", Famille: "Pralines", Poids_Net_g: 200, Prix_Vente_Unitaire_TTC: 15.90, Marge_Unitaire_HT: 8.50 },
+                    { Nom_Produit: "Pâte Noisette", Famille: "Pâtes à tartiner", Poids_Net_g: 250, Prix_Vente_Unitaire_TTC: 12.50, Marge_Unitaire_HT: 6.80 }
+                ];
+                
+                populateSelects();
+                updateTables();
+                status.textContent = '✅ Données chargées';
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                status.textContent = '⚠️ Mode démo - Données d\'exemple';
+            }
+        }
+        
+        // Remplir les sélecteurs
+        function populateSelects() {
+            // Emballages
+            const emb1Select = document.getElementById('prodEmb1');
+            const emb2Select = document.getElementById('prodEmb2');
+            emb1Select.innerHTML = '<option value="">-- Aucun --</option>';
+            emb2Select.innerHTML = '<option value="">-- Aucun --</option>';
+            
+            data.emballages.forEach(e => {
+                const prix = e.Prix_Unitaire_HT || 0;
+                const option = `<option value="${e.Nom_Emballage}" data-prix="${prix}">
+                    ${e.Nom_Emballage} (${prix.toFixed(2)}€ HT)
+                </option>`;
+                emb1Select.innerHTML += option;
+                emb2Select.innerHTML += option;
+            });
+            
+            // Sacs
+            const sacSelect = document.getElementById('prodSac');
+            sacSelect.innerHTML = '<option value="">-- Aucun --</option>';
+            data.sacs.forEach(s => {
+                const prix = s.Prix_Unitaire_HT || 0;
+                sacSelect.innerHTML += `<option value="${s.Nom_Sac}" data-prix="${prix}">
+                    ${s.Nom_Sac} (${prix.toFixed(2)}€ HT)
+                </option>`;
+            });
+        }
+        
+        // Mettre à jour le prix matière
+        function updatePrixMatiere() {
+            const prixKg = parseFloat(document.getElementById('prixMatiereKg').value);
+            document.getElementById('prixMatiereKgValue').textContent = prixKg.toFixed(2) + ' €';
+            document.getElementById('calcPrixKg').textContent = prixKg.toFixed(2) + ' €';
+            updateCalculations();
+        }
+        
+        // Calculs en temps réel
+        function updateCalculations() {
+            const prixKg = parseFloat(document.getElementById('prixMatiereKg').value);
+            const poids = parseFloat(document.getElementById('prodWeight').value);
+            const prixTTC = parseFloat(document.getElementById('prodPriceTTC').value);
+            const tva = parseFloat(document.getElementById('prodTVA').value);
+            
+            // Mise à jour des affichages
+            document.getElementById('prodWeightValue').textContent = poids + ' g';
+            document.getElementById('prodPriceTTCValue').textContent = prixTTC.toFixed(2) + ' €';
+            document.getElementById('calcPoids').textContent = poids + ' g';
+            
+            // Calcul du coût matière
+            const coutMatiere = (poids / 1000) * prixKg;
+            document.getElementById('calcCoutMatiere').textContent = coutMatiere.toFixed(2) + ' €';
+            document.getElementById('costMatiere').textContent = coutMatiere.toFixed(2) + ' €';
+            
+            // Coût des emballages
+            const emb1 = document.getElementById('prodEmb1');
+            const emb2 = document.getElementById('prodEmb2');
+            const sac = document.getElementById('prodSac');
+            
+            const coutEmb1 = emb1.selectedOptions[0]?.dataset.prix ? parseFloat(emb1.selectedOptions[0].dataset.prix) : 0;
+            const coutEmb2 = emb2.selectedOptions[0]?.dataset.prix ? parseFloat(emb2.selectedOptions[0].dataset.prix) : 0;
+            const coutSac = sac.selectedOptions[0]?.dataset.prix ? parseFloat(sac.selectedOptions[0].dataset.prix) : 0;
+            const coutEmballages = coutEmb1 + coutEmb2 + coutSac;
+            
+            document.getElementById('costEmballages').textContent = coutEmballages.toFixed(2) + ' €';
+            
+            // Calcul total et marge
+            const coutTotal = coutMatiere + coutEmballages;
+            const prixHT = prixTTC / (1 + tva/100);
+            const margeHT = prixHT - coutTotal;
+            const tauxMarge = prixHT > 0 ? (margeHT / prixHT * 100) : 0;
+            
+            document.getElementById('costTotal').textContent = coutTotal.toFixed(2) + ' €';
+            document.getElementById('priceHT').textContent = prixHT.toFixed(2) + ' €';
+            document.getElementById('margeHT').textContent = margeHT.toFixed(2) + ' €';
+            document.getElementById('tauxMarge').textContent = tauxMarge.toFixed(1) + '%';
+            
+            // Couleur selon la marge
+            const margeElement = document.getElementById('tauxMarge');
+            if (tauxMarge < 30) {
+                margeElement.style.color = '#dc3545';
+            } else if (tauxMarge < 50) {
+                margeElement.style.color = '#ffc107';
+            } else {
+                margeElement.style.color = '#28a745';
+            }
+            
+            // Mise à jour de la jauge
+            updateGauge(tauxMarge);
+            
+            // Recommandations
+            updateRecommendations(tauxMarge, poids, prixTTC);
+            
+            // Stocker les valeurs actuelles
+            currentProduct = {
+                name: document.getElementById('prodName').value,
+                family: document.getElementById('prodFamily').value,
+                weight: poids,
+                costMP: coutMatiere,
+                costEmb: coutEmballages,
+                priceTTC: prixTTC,
+                priceHT: prixHT,
+                marginHT: margeHT,
+                marginRate: tauxMarge,
+                tva: tva
+            };
+        }
+        
+        // Mettre à jour la jauge
+        function updateGauge(tauxMarge) {
+            const indicator = document.getElementById('gaugeIndicator');
+            const value = document.getElementById('gaugeValue');
+            
+            // Limiter entre 0 et 100
+            const position = Math.min(Math.max(tauxMarge, 0), 100);
+            indicator.style.left = position + '%';
+            value.textContent = tauxMarge.toFixed(0) + '%';
+        }
+        
+        // Recommandations
+        function updateRecommendations(tauxMarge, poids, prix) {
+            const recBox = document.getElementById('recommendations');
+            const recText = document.getElementById('recommendationText');
+            
+            let text = '';
+            let show = false;
+            
+            if (tauxMarge < 30) {
+                text = '⚠️ Marge faible : Envisagez d\'augmenter le prix ou de réduire les coûts d\'emballage.';
+                show = true;
+            } else if (tauxMarge > 70) {
+                text = '✨ Excellente marge ! Produit très rentable.';
+                show = true;
+            }
+            
+            const prixKg = (prix / (poids/1000));
+            if (prixKg < 50) {
+                text += ' Prix au kilo bas pour du chocolat artisanal (< 50€/kg).';
+                show = true;
+            }
+            
+            recText.textContent = text;
+            recBox.style.display = show ? 'block' : 'none';
+        }
+        
+        // Appliquer un scénario prédéfini
+        function applyScenario(type) {
+            const scenarios = {
+                eco: { prixKg: 15, prixTTC: 6 },
+                standard: { prixKg: 20, prixTTC: 10 },
+                premium: { prixKg: 30, prixTTC: 15 },
+                luxe: { prixKg: 40, prixTTC: 25 }
+            };
+            
+            const scenario = scenarios[type];
+            document.getElementById('prixMatiereKg').value = scenario.prixKg;
+            document.getElementById('prodPriceTTC').value = scenario.prixTTC;
+            
+            updatePrixMatiere();
+            updateCalculations();
+            
+            // Activer le bouton
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        // Générer les scénarios dans le simulateur
+        function generateScenarios() {
+            const volume = parseInt(document.getElementById('simVolume')?.value || 100);
+            const tbody = document.getElementById('scenarioTableBody');
+            if (!tbody) return;
+            
+            const scenarios = [
+                { name: 'Économique', prix: 6, marge: 3.5 },
+                { name: 'Standard', prix: 10, marge: 6.5 },
+                { name: 'Premium', prix: 15, marge: 10 },
+                { name: 'Luxe', prix: 25, marge: 18 }
+            ];
+            
+            tbody.innerHTML = scenarios.map(s => {
+                const ca = s.prix * volume;
+                const margeTotal = s.marge * volume;
+                const rentabilite = (s.marge / s.prix * 100).toFixed(1);
+                const color = rentabilite > 50 ? '#28a745' : rentabilite > 35 ? '#ffc107' : '#dc3545';
+                
+                return `<tr>
+                    <td>${s.name}</td>
+                    <td>${s.prix.toFixed(2)} €</td>
+                    <td>${s.marge.toFixed(2)} €</td>
+                    <td>${ca.toFixed(0)} €</td>
+                    <td>${margeTotal.toFixed(0)} €</td>
+                    <td style="color: ${color}; font-weight: bold;">${rentabilite}%</td>
+                </tr>`;
+            }).join('');
+        }
+        
+        // Sauvegarder le produit
+        function saveProduct() {
+            if (!currentProduct.name) {
+                showNotification('⚠️ Entrez un nom de produit', 'warning');
+                return;
+            }
+            
+            savedProducts.push({...currentProduct, date: new Date().toISOString()});
+            showNotification('✅ Produit enregistré !');
+            updateTables();
+        }
+        
+        // Mettre à jour les tables
+        function updateTables() {
+            const tbody = document.getElementById('productsTableBody');
+            if (!tbody) return;
+            
+            const allProducts = [...data.produits, ...savedProducts];
+            
+            tbody.innerHTML = allProducts.map(p => `
+                <tr>
+                    <td>${p.Nom_Produit || p.name}</td>
+                    <td>${p.Famille || p.family || '-'}</td>
+                    <td>${p.Poids_Net_g || p.weight || '-'} g</td>
+                    <td>${(p.Prix_Vente_Unitaire_TTC || p.priceTTC || 0).toFixed(2)} €</td>
+                    <td>${(p.Marge_Unitaire_HT || p.marginHT || 0).toFixed(2)} €</td>
+                    <td>
+                        <button onclick="editProduct('${p.Nom_Produit || p.name}')">✏️</button>
+                        <button onclick="deleteProduct('${p.Nom_Produit || p.name}')">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // Filtrer les produits
+        function filterProducts() {
+            const search = document.getElementById('searchProduct').value.toLowerCase();
+            const rows = document.querySelectorAll('#productsTableBody tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(search) ? '' : 'none';
+            });
+        }
+        
+        // Mode compact
+        function toggleCompactMode() {
+            document.body.classList.toggle('compact-mode');
+        }
+        
+        // Afficher un onglet
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'simulator') {
+                generateScenarios();
+            }
+        }
+        
+        // Notification
+        function showNotification(message, type = 'success') {
+            const notif = document.getElementById('notification');
+            notif.textContent = message;
+            notif.style.background = type === 'success' ? '#28a745' : 
+                                   type === 'warning' ? '#ffc107' : '#dc3545';
+            notif.style.display = 'block';
+            
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Fonctions placeholder pour édition/suppression
+        function editProduct(name) {
+            showNotification('Édition de ' + name);
+        }
+        
+        function deleteProduct(name) {
+            if (confirm('Supprimer ' + name + ' ?')) {
+                savedProducts = savedProducts.filter(p => p.name !== name);
+                updateTables();
+                showNotification('Produit supprimé');
+            }
+        }
+        
+        function updateMaterialPrices() {
+            // Mise à jour des prix matières
+            showNotification('Prix mis à jour');
+        }
+        
+        // Initialisation au chargement
+        window.onload = init;
+    </script>
 </body>
 </html>
