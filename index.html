@@ -1,1132 +1,255 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord - Espèce de Ganache</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-        
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        
-        header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        
-        .tabs {
-            display: flex;
-            background: #f0f0f0;
-            border-bottom: 3px solid #667eea;
-        }
-        
-        .tab {
-            flex: 1;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            background: #f8f9fa;
-            border: none;
-            font-size: 16px;
-            font-weight: 600;
-            color: #666;
-            transition: all 0.3s;
-        }
-        
-        .tab:hover {
-            background: #e9ecef;
-        }
-        
-        .tab.active {
-            background: white;
-            color: #667eea;
-            border-bottom: 3px solid #667eea;
-            margin-bottom: -3px;
-        }
-        
-        .content {
-            padding: 30px;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #495057;
-            font-weight: 600;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        
-        .form-row-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-        }
-        
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        
-        .result-box {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 2px solid #e9ecef;
-        }
-        
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        
-        .result-label {
-            font-weight: 600;
-            color: #495057;
-        }
-        
-        .result-value {
-            color: #667eea;
-            font-weight: bold;
-        }
-        
-        .search-box {
-            position: relative;
-            margin-bottom: 20px;
-        }
-        
-        .search-box input {
-            padding-left: 45px;
-        }
-        
-        .search-box::before {
-            content: "🔍";
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 20px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #495057;
-            position: sticky;
-            top: 0;
-        }
-        
-        tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .badge-success {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .badge-warning {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .badge-danger {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .badge-info {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 2em;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            opacity: 0.9;
-        }
-        
-        .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-left: 4px solid #0c5460;
-        }
-        
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border-left: 4px solid #155724;
-        }
-        
-        .alert-warning {
-            background: #fff3cd;
-            color: #856404;
-            border-left: 4px solid #856404;
-        }
-        
-        .alert-danger {
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #721c24;
-        }
-        
-        #notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #28a745;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            display: none;
-            animation: slideIn 0.5s;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            z-index: 1000;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(400px); }
-            to { transform: translateX(0); }
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-        
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .table-container {
-            max-height: 500px;
-            overflow-y: auto;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-        }
-        
-        .clickable-row {
-            cursor: pointer;
-        }
-        
-        .clickable-row:hover {
-            background: #e8f4ff !important;
-        }
-        
-        .detail-view {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-        
-        .detail-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-        
-        .detail-item {
-            padding: 10px;
-            background: white;
-            border-radius: 6px;
-        }
-        
-        .detail-label {
-            font-size: 12px;
-            color: #6c757d;
-            margin-bottom: 5px;
-        }
-        
-        .detail-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: #495057;
-        }
-    </style>
-    <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de Bord - Espèce de Ganache</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      margin: 0;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    header h1 { font-size: 2.5em; margin-bottom: 10px; }
+    .tabs { display: flex; background: #f0f0f0; border-bottom: 3px solid #667eea; }
+    .tab {
+      flex: 1; padding: 20px; text-align: center;
+      cursor: pointer; background: #f8f9fa; border: none;
+      font-size: 16px; font-weight: 600; color: #666; transition: all 0.3s;
+    }
+    .tab:hover { background: #e9ecef; }
+    .tab.active { background: white; color: #667eea; border-bottom: 3px solid #667eea; margin-bottom: -3px; }
+    .content { padding: 30px; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.5s; }
+    @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e9ecef; }
+    th { background: #f8f9fa; font-weight: 600; color: #495057; }
+    tr:hover { background: #f8f9fa; }
+    .badge { display:inline-block; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:600; }
+    .badge-success{background:#d4edda;color:#155724;}
+    .badge-warning{background:#fff3cd;color:#856404;}
+    .badge-danger{background:#f8d7da;color:#721c24;}
+    .badge-info{background:#d1ecf1;color:#0c5460;}
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white; padding: 20px; border-radius: 12px;
+      text-align: center;
+    }
+    .stat-value { font-size: 2em; font-weight: bold; margin-bottom: 5px; }
+    #notification {
+      position: fixed; top: 20px; right: 20px;
+      background: #28a745; color: white;
+      padding: 15px 25px; border-radius: 8px; display: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+  </style>
+  <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🍫 Espèce de Ganache</h1>
-            <p>Tableau de Bord Gestion Produits & Stocks</p>
-            <p id="dataLoadStatus" style="margin-top: 10px; font-size: 14px;"></p>
-        </header>
-        
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('calculator')">📊 Calculateur Produit</button>
-            <button class="tab" onclick="showTab('products')">📦 Produits</button>
-            <button class="tab" onclick="showTab('packaging')">📋 Emballages</button>
-            <button class="tab" onclick="showTab('materials')">🍫 Matières Premières</button>
-        </div>
-        
-        <div class="content">
-            <!-- Calculateur de Produit -->
-            <div id="calculator" class="tab-content active">
-                <h2>Calculateur de Nouveau Produit</h2>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nom du produit</label>
-                        <input type="text" id="prodName" placeholder="Ex: Tablette 70% Orange">
-                    </div>
-                    <div class="form-group">
-                        <label>Famille</label>
-                        <select id="prodFamily">
-                            <option value="">-- Sélectionner --</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="form-row-3">
-                    <div class="form-group">
-                        <label>Poids net (g)</label>
-                        <input type="number" id="prodWeight" placeholder="100" min="0">
-                    </div>
-                    <div class="form-group">
-                        <label>Coût matière HT (€)</label>
-                        <input type="number" id="prodCostMP" placeholder="2.50" step="0.01" min="0">
-                    </div>
-                    <div class="form-group">
-                        <label>TVA (%)</label>
-                        <select id="prodTVA">
-                            <option value="5.5">5.5%</option>
-                            <option value="20">20%</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="form-row-3">
-                    <div class="form-group">
-                        <label>Emballage 1</label>
-                        <select id="prodEmb1">
-                            <option value="">-- Aucun --</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Emballage 2</label>
-                        <select id="prodEmb2">
-                            <option value="">-- Aucun --</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Sac</label>
-                        <select id="prodSac">
-                            <option value="">-- Aucun --</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Prix de vente TTC (€)</label>
-                        <input type="number" id="prodPriceTTC" placeholder="10.00" step="0.01" min="0">
-                    </div>
-                    <div class="form-group">
-                        <label>&nbsp;</label>
-                        <button onclick="calculateProduct()" style="width: 100%">
-                            Calculer Rentabilité
-                        </button>
-                    </div>
-                </div>
-                
-                <div id="calcResults" class="result-box" style="display: none;">
-                    <h3>📈 Résultats</h3>
-                    <div class="result-item">
-                        <span class="result-label">Coût de revient HT</span>
-                        <span class="result-value" id="resCostHT">0.00 €</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Prix de vente HT</span>
-                        <span class="result-value" id="resPriceHT">0.00 €</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Marge HT</span>
-                        <span class="result-value" id="resMarginHT">0.00 €</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Taux de marge</span>
-                        <span class="result-value" id="resMarginRate">0 %</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Prix au kilo TTC</span>
-                        <span class="result-value" id="resPriceKg">0.00 €/kg</span>
-                    </div>
-                    <button onclick="saveNewProduct()" style="margin-top: 20px; width: 100%;">
-                        💾 Ajouter ce produit à la liste
-                    </button>
-                </div>
-                
-                <div id="savedProducts" style="margin-top: 30px; display: none;">
-                    <h3>📝 Nouveaux produits créés aujourd'hui</h3>
-                    <table style="margin-top: 10px;">
-                        <thead>
-                            <tr>
-                                <th>Nom</th>
-                                <th>Famille</th>
-                                <th>Prix TTC</th>
-                                <th>Marge</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="newProductsList"></tbody>
-                    </table>
-                    <button onclick="exportNewProducts()" style="margin-top: 15px;">
-                        📥 Exporter en CSV
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Liste des Produits -->
-            <div id="products" class="tab-content">
-                <h2>Produits Finis</h2>
-                <div class="search-box">
-                    <input type="text" id="searchProduct" placeholder="Rechercher un produit..." 
-                           onkeyup="filterProducts()">
-                </div>
-                
-                <div class="stats-grid" id="productStats"></div>
-                
-                <div class="table-container">
-                    <table id="productsTable">
-                        <thead>
-                            <tr>
-                                <th>Produit</th>
-                                <th>Famille</th>
-                                <th>Poids (g)</th>
-                                <th>Prix TTC</th>
-                                <th>Prix/kg</th>
-                                <th>Marge HT</th>
-                                <th>Actif</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productsTableBody">
-                            <tr><td colspan="7" class="loading">Chargement...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div id="productDetail" class="detail-view" style="display: none;">
-                    <h3>Détails du produit</h3>
-                    <div class="detail-grid" id="productDetailContent"></div>
-                </div>
-            </div>
-            
-            <!-- Liste des Emballages -->
-            <div id="packaging" class="tab-content">
-                <h2>Emballages & Sacs</h2>
-                <div class="search-box">
-                    <input type="text" id="searchPackaging" placeholder="Rechercher un emballage..." 
-                           onkeyup="filterPackaging()">
-                </div>
-                
-                <div class="stats-grid" id="packagingStats"></div>
-                
-                <h3>📦 Emballages</h3>
-                <div class="table-container">
-                    <table id="packagingTable">
-                        <thead>
-                            <tr>
-                                <th>Emballage</th>
-                                <th>Fournisseur</th>
-                                <th>Prix HT</th>
-                                <th>Prix TTC</th>
-                                <th>Nb Produits</th>
-                            </tr>
-                        </thead>
-                        <tbody id="packagingTableBody">
-                            <tr><td colspan="5" class="loading">Chargement...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <h3 style="margin-top: 30px;">🛍️ Sacs</h3>
-                <div class="table-container" style="max-height: 300px;">
-                    <table id="sacsTable">
-                        <thead>
-                            <tr>
-                                <th>Sac</th>
-                                <th>Fournisseur</th>
-                                <th>Prix HT</th>
-                                <th>Prix TTC</th>
-                                <th>TVA</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sacsTableBody">
-                            <tr><td colspan="5" class="loading">Chargement...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- Matières Premières -->
-            <div id="materials" class="tab-content">
-                <h2>Matières Premières</h2>
-                <div class="search-box">
-                    <input type="text" id="searchMaterials" placeholder="Rechercher une matière première..." 
-                           onkeyup="filterMaterials()">
-                </div>
-                
-                <div class="stats-grid" id="materialsStats"></div>
-                
-                <div class="table-container">
-                    <table id="materialsTable">
-                        <thead>
-                            <tr>
-                                <th>Nom</th>
-                                <th>Catégorie</th>
-                                <th>Fournisseur</th>
-                                <th>Prix/unité TTC</th>
-                                <th>Stock</th>
-                                <th>Valeur Stock</th>
-                                <th>Statut</th>
-                            </tr>
-                        </thead>
-                        <tbody id="materialsTableBody">
-                            <tr><td colspan="7" class="loading">Chargement...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <header>
+      <h1>🍫 Espèce de Ganache</h1>
+      <p>Tableau de Bord Gestion Produits & Stocks</p>
+      <p id="dataLoadStatus" style="margin-top:10px;font-size:14px;"></p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('products', this)">📦 Produits</button>
+      <button class="tab" onclick="showTab('packaging', this)">📋 Emballages</button>
+      <button class="tab" onclick="showTab('materials', this)">🍫 Matières Premières</button>
     </div>
-    
-    <div id="notification"></div>
-    
-    <script>
-        // Variables globales pour stocker les données
-        let data = {
-            fournisseurs: [],
-            matierespremieres: [],
-            produits: [],
-            emballages: [],
-            sacs: []
-        };
-        
-        let newProducts = [];
-        
-        // Fonction pour afficher un onglet
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-        
-        // Parser CSV amélioré
-        function parseCSV(text, delimiter = ';') {
-            const lines = text.trim().split(/\r?\n/);
-            const headers = lines[0].split(delimiter).map(h => h.trim());
-            const result = [];
-            
-            for (let i = 1; i < lines.length; i++) {
-                if (lines[i].trim() === '') continue;
-                const values = lines[i].split(delimiter);
-                const obj = {};
-                headers.forEach((header, index) => {
-                    let value = values[index] ? values[index].trim() : '';
-                    // Convertir en nombre si possible
-                    if (value && !isNaN(value.replace(',', '.'))) {
-                        value = parseFloat(value.replace(',', '.'));
-                    }
-                    obj[header] = value === '' ? null : value;
-                });
-                result.push(obj);
-            }
-            return result;
-        }
-        
-        // Charger tous les fichiers CSV
-        
-        async function loadAllData() {
-            const status = document.getElementById('dataLoadStatus');
-            status.textContent = '⏳ Connexion à Grist...';
-            try {
-                // Demande les droits nécessaires (plein accès requis pour fetchTable multi-tables)
-                grist.ready({ requiredAccess: 'full' });
-                
-                // Petit helper pour convertir la forme "col => arrays" en tableau d'objets
-                function toRows(tableData) {
-                    if (Array.isArray(tableData)) return tableData;
-                    if (tableData && typeof tableData === 'object') {
-                        const cols = Object.keys(tableData);
-                        if (cols.includes('id') && Array.isArray(tableData.id)) {
-                            const n = tableData.id.length;
-                            const rows = [];
-                            for (let i = 0; i < n; i++) {
-                                const obj = {};
-                                for (const c of cols) {
-                                    obj[c] = tableData[c][i];
-                                }
-                                rows.push(obj);
-                            }
-                            return rows;
-                        }
-                    }
-                    return [];
-                }
-                
-                status.textContent = '⏳ Récupération des tables...';
-                
-                // Charge les 5 tables nécessaires
-                const [fournisseursRaw, mpRaw, produitsRaw, emballagesRaw, sacsRaw] = await Promise.all([
-                    grist.docApi.fetchTable('1_FOURNISSEURS'),
-                    grist.docApi.fetchTable('2_MATIERES_PREMIERES'),
-                    grist.docApi.fetchTable('Produits_Finis'),
-                    grist.docApi.fetchTable('Emballages'),
-                    grist.docApi.fetchTable('SACS'),
-                ]);
-                
-                // Normalise
-                data.fournisseurs = toRows(fournisseursRaw);
-                data.matierespremieres = toRows(mpRaw);
-                data.produits = toRows(produitsRaw);
-                data.emballages = toRows(emballagesRaw);
-                data.sacs = toRows(sacsRaw);
-                
-                // Met à jour l'interface
-                populateSelects();
-                updateAllTables();
-                updateStats();
-                
-                status.textContent = `✅ ${data.produits.length} produits, ${data.emballages.length} emballages, ${data.matierespremieres.length} MP chargés`;
-                showNotification('✅ Données Grist chargées avec succès!');
-            } catch (error) {
-                console.error('Erreur:', error);
-                status.textContent = '❌ Erreur de chargement depuis Grist';
-                showNotification('❌ Erreur: ' + error.message, 'danger');
-            }
-        }
-produits, ${data.emballages.length} emballages, ${data.matierespremieres.length} MP chargés`;
-                showNotification('✅ Données chargées avec succès!');
-                
-            } catch (error) {
-                console.error('Erreur:', error);
-                status.textContent = '❌ Erreur de chargement - Vérifiez que les CSV sont dans le même dossier';
-                showNotification('❌ Erreur: ' + error.message, 'danger');
-            }
-        }
-        
-        // Remplir les sélecteurs
-        function populateSelects() {
-            // Familles de produits
-            const families = [...new Set(data.produits.map(p => p.Famille).filter(f => f))];
-            const familySelect = document.getElementById('prodFamily');
-            familySelect.innerHTML = '<option value="">-- Sélectionner --</option>';
-            families.sort().forEach(f => {
-                familySelect.innerHTML += `<option value="${f}">${f}</option>`;
-            });
-            
-            // Emballages
-            const emb1Select = document.getElementById('prodEmb1');
-            const emb2Select = document.getElementById('prodEmb2');
-            emb1Select.innerHTML = '<option value="">-- Aucun --</option>';
-            emb2Select.innerHTML = '<option value="">-- Aucun --</option>';
-            
-            data.emballages.forEach(e => {
-                const prix = e.Prix_Unitaire_HT || 0;
-                const option = `<option value="${e.Nom_Emballage}" data-prix="${prix}">
-                    ${e.Nom_Emballage} (${prix.toFixed(2)}€ HT)
-                </option>`;
-                emb1Select.innerHTML += option;
-                emb2Select.innerHTML += option;
-            });
-            
-            // Sacs
-            const sacSelect = document.getElementById('prodSac');
-            sacSelect.innerHTML = '<option value="">-- Aucun --</option>';
-            data.sacs.forEach(s => {
-                const prix = s.Prix_Unitaire_HT || 0;
-                sacSelect.innerHTML += `<option value="${s.Nom_Sac}" data-prix="${prix}">
-                    ${s.Nom_Sac} (${prix.toFixed(2)}€ HT)
-                </option>`;
-            });
-        }
-        
-        // Mettre à jour toutes les tables
-        function updateAllTables() {
-            // Table des produits
-            const productsHTML = data.produits.map(p => {
-                const priceKg = p.Poids_Net_g > 0 ? (p.Prix_Vente_Unitaire_TTC / (p.Poids_Net_g / 1000)) : 0;
-                const marge = p.Marge_Unitaire_HT || 0;
-                const margeClass = marge > 3 ? 'success' : marge > 1 ? 'warning' : 'danger';
-                const actifClass = p.Actif === 'Oui' ? 'success' : 'warning';
-                
-                return `<tr class="clickable-row" onclick="showProductDetail('${p.Nom_Produit}')">
-                    <td>${p.Nom_Produit || ''}</td>
-                    <td><span class="badge badge-info">${p.Famille || ''}</span></td>
-                    <td>${p.Poids_Net_g || ''}</td>
-                    <td>${p.Prix_Vente_Unitaire_TTC ? p.Prix_Vente_Unitaire_TTC.toFixed(2) + '€' : ''}</td>
-                    <td>${priceKg ? priceKg.toFixed(2) + '€' : ''}</td>
-                    <td><span class="badge badge-${margeClass}">${marge.toFixed(2)}€</span></td>
-                    <td><span class="badge badge-${actifClass}">${p.Actif || 'Non'}</span></td>
-                </tr>`;
-            }).join('');
-            document.getElementById('productsTableBody').innerHTML = productsHTML || '<tr><td colspan="7">Aucun produit trouvé</td></tr>';
-            
-            // Table des emballages
-            const packagingHTML = data.emballages.map(e => {
-                // Compter combien de produits utilisent cet emballage
-                const nbProduits = data.produits.filter(p => 
-                    p.Nom_Emballage_1 === e.Nom_Emballage || p.Nom_Emballage_2 === e.Nom_Emballage
-                ).length;
-                
-                return `<tr>
-                    <td>${e.Nom_Emballage || ''}</td>
-                    <td>${e.Nom_Fournisseur || ''}</td>
-                    <td>${e.Prix_Unitaire_HT ? e.Prix_Unitaire_HT.toFixed(3) + '€' : ''}</td>
-                    <td>${e.Prix_Unitaire_TTC ? e.Prix_Unitaire_TTC.toFixed(3) + '€' : ''}</td>
-                    <td><span class="badge badge-info">${nbProduits}</span></td>
-                </tr>`;
-            }).join('');
-            document.getElementById('packagingTableBody').innerHTML = packagingHTML || '<tr><td colspan="5">Aucun emballage trouvé</td></tr>';
-            
-            // Table des sacs
-            const sacsHTML = data.sacs.map(s => `
-                <tr>
-                    <td>${s.Nom_Sac || ''}</td>
-                    <td>${s.Nom_Fournisseur || ''}</td>
-                    <td>${s.Prix_Unitaire_HT || '0'}€</td>
-                    <td>${s.Prix_Unitaire_TTC || '0'}€</td>
-                    <td>${s.TVA_Taux || '20'}%</td>
-                </tr>
-            `).join('');
-            document.getElementById('sacsTableBody').innerHTML = sacsHTML || '<tr><td colspan="5">Aucun sac trouvé</td></tr>';
-            
-            // Table des matières premières
-            const materialsHTML = data.matierespremieres.map(m => {
-                const statusClass = m.Statut === 'Actif' ? 'success' : 'warning';
-                return `<tr>
-                    <td>${m.Nom_MP || ''}</td>
-                    <td>${m.Categorie || ''}</td>
-                    <td>${m.Fournisseur || ''}</td>
-                    <td>${m.Prix_Achat_Unitaire_TTC ? m.Prix_Achat_Unitaire_TTC.toFixed(2) + '€/' + m.Unite : ''}</td>
-                    <td>${m.Stock_Actuel || '0'} ${m.Unite || ''}</td>
-                    <td>${m.Valeur_Stock ? m.Valeur_Stock.toFixed(2) + '€' : ''}</td>
-                    <td><span class="badge badge-${statusClass}">${m.Statut || ''}</span></td>
-                </tr>`;
-            }).join('');
-            document.getElementById('materialsTableBody').innerHTML = materialsHTML || '<tr><td colspan="7">Aucune matière première trouvée</td></tr>';
-        }
-        
-        // Mettre à jour les statistiques
-        function updateStats() {
-            // Stats produits
-            const produitsActifs = data.produits.filter(p => p.Actif === 'Oui').length;
-            const prixMoyen = data.produits.reduce((acc, p) => acc + (p.Prix_Vente_Unitaire_TTC || 0), 0) / data.produits.length;
-            
-            document.getElementById('productStats').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">${data.produits.length}</div>
-                    <div class="stat-label">Total Produits</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${produitsActifs}</div>
-                    <div class="stat-label">Produits Actifs</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${prixMoyen.toFixed(2)}€</div>
-                    <div class="stat-label">Prix Moyen TTC</div>
-                </div>
-            `;
-            
-            // Stats emballages
-            const fournisseursUniques = [...new Set(data.emballages.map(e => e.Nom_Fournisseur))].length;
-            document.getElementById('packagingStats').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">${data.emballages.length}</div>
-                    <div class="stat-label">Total Emballages</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${data.sacs.length}</div>
-                    <div class="stat-label">Types de Sacs</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${fournisseursUniques}</div>
-                    <div class="stat-label">Fournisseurs</div>
-                </div>
-            `;
-            
-            // Stats matières premières
-            const valeurStock = data.matierespremieres.reduce((acc, m) => acc + (m.Valeur_Stock || 0), 0);
-            const categories = [...new Set(data.matierespremieres.map(m => m.Categorie))].length;
-            
-            document.getElementById('materialsStats').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">${data.matierespremieres.length}</div>
-                    <div class="stat-label">Références MP</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${categories}</div>
-                    <div class="stat-label">Catégories</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${(valeurStock/1000).toFixed(1)}k€</div>
-                    <div class="stat-label">Valeur Stock</div>
-                </div>
-            `;
-        }
-        
-        // Calculer le produit
-        function calculateProduct() {
-            const name = document.getElementById('prodName').value;
-            if (!name) {
-                showNotification('⚠️ Entrez un nom de produit', 'warning');
-                return;
-            }
-            
-            const weight = parseFloat(document.getElementById('prodWeight').value) || 0;
-            const costMP = parseFloat(document.getElementById('prodCostMP').value) || 0;
-            const tva = parseFloat(document.getElementById('prodTVA').value) || 5.5;
-            const priceTTC = parseFloat(document.getElementById('prodPriceTTC').value) || 0;
-            
-            const emb1 = document.getElementById('prodEmb1');
-            const emb2 = document.getElementById('prodEmb2');
-            const sac = document.getElementById('prodSac');
-            
-            const costEmb1 = emb1.selectedOptions[0]?.dataset.prix ? parseFloat(emb1.selectedOptions[0].dataset.prix) : 0;
-            const costEmb2 = emb2.selectedOptions[0]?.dataset.prix ? parseFloat(emb2.selectedOptions[0].dataset.prix) : 0;
-            const costSac = sac.selectedOptions[0]?.dataset.prix ? parseFloat(sac.selectedOptions[0].dataset.prix) : 0;
-            
-            const costTotal = costMP + costEmb1 + costEmb2 + costSac;
-            const priceHT = priceTTC / (1 + tva/100);
-            const marginHT = priceHT - costTotal;
-            const marginRate = priceHT > 0 ? (marginHT / priceHT * 100) : 0;
-            const pricePerKg = weight > 0 ? (priceTTC / (weight/1000)) : 0;
-            
-            document.getElementById('resCostHT').textContent = costTotal.toFixed(2) + ' €';
-            document.getElementById('resPriceHT').textContent = priceHT.toFixed(2) + ' €';
-            document.getElementById('resMarginHT').textContent = marginHT.toFixed(2) + ' €';
-            document.getElementById('resMarginRate').textContent = marginRate.toFixed(1) + ' %';
-            document.getElementById('resMarginRate').style.color = marginRate > 40 ? '#28a745' : marginRate > 25 ? '#ffc107' : '#dc3545';
-            document.getElementById('resPriceKg').textContent = pricePerKg.toFixed(2) + ' €/kg';
-            
-            document.getElementById('calcResults').style.display = 'block';
-            
-            window.currentCalculation = {
-                name, 
-                family: document.getElementById('prodFamily').value,
-                weight, 
-                costMP, 
-                costEmb1, 
-                costEmb2, 
-                costSac,
-                emb1: emb1.value, 
-                emb2: emb2.value, 
-                sac: sac.value,
-                priceTTC, 
-                priceHT, 
-                marginHT, 
-                marginRate, 
-                pricePerKg, 
-                tva
-            };
-        }
-        
-        // Sauvegarder le nouveau produit
-        function saveNewProduct() {
-            if (!window.currentCalculation) return;
-            
-            newProducts.push({...window.currentCalculation});
-            
-            // Afficher la liste
-            document.getElementById('savedProducts').style.display = 'block';
-            const listHTML = newProducts.map((p, i) => `
-                <tr>
-                    <td>${p.name}</td>
-                    <td>${p.family}</td>
-                    <td>${p.priceTTC.toFixed(2)}€</td>
-                    <td>${p.marginRate.toFixed(1)}%</td>
-                    <td><button onclick="removeNewProduct(${i})">❌</button></td>
-                </tr>
-            `).join('');
-            document.getElementById('newProductsList').innerHTML = listHTML;
-            
-            showNotification('✅ Produit ajouté!');
-            
-            // Réinitialiser
-            document.getElementById('prodName').value = '';
-            document.getElementById('prodWeight').value = '';
-            document.getElementById('prodCostMP').value = '';
-            document.getElementById('prodPriceTTC').value = '';
-            document.getElementById('calcResults').style.display = 'none';
-        }
-        
-        // Retirer un nouveau produit
-        function removeNewProduct(index) {
-            newProducts.splice(index, 1);
-            saveNewProduct(); // Rafraîchir l'affichage
-        }
-        
-        // Exporter les nouveaux produits
-        function exportNewProducts() {
-            if (newProducts.length === 0) {
-                showNotification('⚠️ Aucun produit à exporter', 'warning');
-                return;
-            }
-            
-            let csv = 'Nom_Produit;Famille;Ss_famille;Poids_Net_g;Nom_Emballage_1;Nom_Emballage_2;Sac_ID;';
-            csv += 'Prix_Vente_Unitaire_TTC;TVA_Taux;Prix_Vente_HT;Prix_Vente_kg_TTC;';
-            csv += 'Cout_Matiere_HT;Cout_Emballage_HT;Cout_Sac_HT;Cout_Revient_HT;';
-            csv += 'Marge_Unitaire_HT;Actif;TVA_Rate_pct;Type_Produit\n';
-            
-            newProducts.forEach(p => {
-                const coutEmballage = (p.costEmb1 + p.costEmb2).toFixed(2);
-                const coutTotal = (p.costMP + p.costEmb1 + p.costEmb2 + p.costSac).toFixed(2);
-                
-                csv += `${p.name};${p.family};;${p.weight};${p.emb1};${p.emb2};${p.sac};`;
-                csv += `${p.priceTTC.toFixed(2)};${p.tva};${p.priceHT.toFixed(2)};${p.pricePerKg.toFixed(2)};`;
-                csv += `${p.costMP.toFixed(2)};${coutEmballage};${p.costSac.toFixed(2)};${coutTotal};`;
-                csv += `${p.marginHT.toFixed(2)};Oui;${(p.tva/100).toFixed(3)};Produit\n`;
-            });
-            
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'nouveaux_produits_' + new Date().toISOString().slice(0,10) + '.csv');
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showNotification('✅ CSV exporté!');
-        }
-        
-        // Afficher le détail d'un produit
-        function showProductDetail(nomProduit) {
-            const produit = data.produits.find(p => p.Nom_Produit === nomProduit);
-            if (!produit) return;
-            
-            const detail = document.getElementById('productDetail');
-            const content = document.getElementById('productDetailContent');
-            
-            content.innerHTML = `
-                <div class="detail-item">
-                    <div class="detail-label">Produit</div>
-                    <div class="detail-value">${produit.Nom_Produit}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Famille</div>
-                    <div class="detail-value">${produit.Famille || '-'}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Poids</div>
-                    <div class="detail-value">${produit.Poids_Net_g || '-'} g</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Prix TTC</div>
-                    <div class="detail-value">${produit.Prix_Vente_Unitaire_TTC ? produit.Prix_Vente_Unitaire_TTC.toFixed(2) + '€' : '-'}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Emballage 1</div>
-                    <div class="detail-value">${produit.Nom_Emballage_1 || '-'}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Emballage 2</div>
-                    <div class="detail-value">${produit.Nom_Emballage_2 || '-'}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Sac</div>
-                    <div class="detail-value">${produit.Sac_ID || '-'}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Marge HT</div>
-                    <div class="detail-value">${produit.Marge_Unitaire_HT ? produit.Marge_Unitaire_HT.toFixed(2) + '€' : '-'}</div>
-                </div>
-            `;
-            
-            detail.style.display = 'block';
-            detail.scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        // Filtres
-        function filterProducts() {
-            const search = document.getElementById('searchProduct').value.toLowerCase();
-            const rows = document.querySelectorAll('#productsTableBody tr');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(search) ? '' : 'none';
-            });
-        }
-        
-        function filterPackaging() {
-            const search = document.getElementById('searchPackaging').value.toLowerCase();
-            const rows = document.querySelectorAll('#packagingTableBody tr, #sacsTableBody tr');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(search) ? '' : 'none';
-            });
-        }
-        
-        function filterMaterials() {
-            const search = document.getElementById('searchMaterials').value.toLowerCase();
-            const rows = document.querySelectorAll('#materialsTableBody tr');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(search) ? '' : 'none';
-            });
-        }
-        
-        // Notification
-        function showNotification(message, type = 'success') {
-            const notif = document.getElementById('notification');
-            notif.textContent = message;
-            notif.style.background = type === 'success' ? '#28a745' : 
-                                   type === 'warning' ? '#ffc107' : '#dc3545';
-            notif.style.display = 'block';
-            
-            setTimeout(() => {
-                notif.style.display = 'none';
-            }, 3000);
-        }
-        
-        // Charger les données au démarrage
-        window.onload = function() {
-            loadAllData();
-        };
-    </script>
+
+    <div class="content">
+      <!-- Produits -->
+      <div id="products" class="tab-content active">
+        <h2>Produits Finis</h2>
+        <div class="stats-grid" id="productStats"></div>
+        <div class="table-container">
+          <table id="productsTable">
+            <thead>
+              <tr>
+                <th>Produit</th><th>Famille</th><th>Poids (g)</th>
+                <th>Prix TTC</th><th>Prix/kg</th><th>Marge HT</th><th>Actif</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody"><tr><td colspan="7">Chargement...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Emballages -->
+      <div id="packaging" class="tab-content">
+        <h2>Emballages & Sacs</h2>
+        <div class="stats-grid" id="packagingStats"></div>
+        <h3>📦 Emballages</h3>
+        <table><thead><tr><th>Emballage</th><th>Fournisseur</th><th>Prix HT</th><th>Prix TTC</th><th>Nb Produits</th></tr></thead>
+          <tbody id="packagingTableBody"><tr><td colspan="5">Chargement...</td></tr></tbody></table>
+        <h3 style="margin-top:30px;">🛍️ Sacs</h3>
+        <table><thead><tr><th>Sac</th><th>Fournisseur</th><th>Prix HT</th><th>Prix TTC</th><th>TVA</th></tr></thead>
+          <tbody id="sacsTableBody"><tr><td colspan="5">Chargement...</td></tr></tbody></table>
+      </div>
+
+      <!-- Matières Premières -->
+      <div id="materials" class="tab-content">
+        <h2>Matières Premières</h2>
+        <div class="stats-grid" id="materialsStats"></div>
+        <table>
+          <thead><tr><th>Nom</th><th>Catégorie</th><th>Fournisseur</th><th>Prix/unité TTC</th><th>Stock</th><th>Valeur Stock</th><th>Statut</th></tr></thead>
+          <tbody id="materialsTableBody"><tr><td colspan="7">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="notification"></div>
+
+<script>
+let data = { produits:[], emballages:[], sacs:[], matieres:[] };
+
+function showTab(tabName, el) {
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(tabName).classList.add('active');
+  el.classList.add('active');
+}
+
+function toRows(tableData) {
+  if (Array.isArray(tableData)) return tableData;
+  if (tableData && tableData.id) {
+    const n=tableData.id.length, out=[];
+    const cols=Object.keys(tableData);
+    for(let i=0;i<n;i++){const o={}; for(const c of cols) o[c]=tableData[c][i]; out.push(o);}
+    return out;
+  }
+  return [];
+}
+
+async function loadAllData(){
+  const status=document.getElementById('dataLoadStatus');
+  status.textContent='⏳ Connexion à Grist...';
+  try {
+    grist.ready({ requiredAccess:'full' });
+    const [prod, emb, sacs, mp] = await Promise.all([
+      grist.docApi.fetchTable('Produits_Finis'),
+      grist.docApi.fetchTable('Emballages'),
+      grist.docApi.fetchTable('SACS'),
+      grist.docApi.fetchTable('2_MATIERES_PREMIERES')
+    ]);
+    data.produits=toRows(prod);
+    data.emballages=toRows(emb);
+    data.sacs=toRows(sacs);
+    data.matieres=toRows(mp);
+
+    updateTables();
+    updateStats();
+    status.textContent=`✅ ${data.produits.length} produits, ${data.emballages.length} emballages, ${data.matieres.length} MP chargés`;
+  } catch(e){
+    console.error(e);
+    status.textContent='❌ Erreur: '+e.message;
+  }
+}
+
+function updateTables(){
+  // Produits
+  document.getElementById('productsTableBody').innerHTML =
+    data.produits.map(p=>{
+      const priceKg = p.Poids_Net_g ? (p.Prix_Vente_Unitaire_TTC/(p.Poids_Net_g/1000)) : 0;
+      const marge = p.Marge_Unitaire_HT || 0;
+      const mc = marge>3?'success':marge>1?'warning':'danger';
+      const ac = p.Actif==='Oui'?'success':'warning';
+      return `<tr>
+        <td>${p.Nom_Produit||''}</td>
+        <td><span class="badge badge-info">${p.Famille||''}</span></td>
+        <td>${p.Poids_Net_g||''}</td>
+        <td>${p.Prix_Vente_Unitaire_TTC? p.Prix_Vente_Unitaire_TTC.toFixed(2)+'€':''}</td>
+        <td>${priceKg?priceKg.toFixed(2)+'€':''}</td>
+        <td><span class="badge badge-${mc}">${marge.toFixed(2)}€</span></td>
+        <td><span class="badge badge-${ac}">${p.Actif||'Non'}</span></td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="7">Aucun produit</td></tr>';
+
+  // Emballages
+  document.getElementById('packagingTableBody').innerHTML =
+    data.emballages.map(e=>{
+      const nb = data.produits.filter(p=>p.Nom_Emballage_1===e.Nom_Emballage || p.Nom_Emballage_2===e.Nom_Emballage).length;
+      return `<tr>
+        <td>${e.Nom_Emballage||''}</td>
+        <td>${e.Nom_Fournisseur||''}</td>
+        <td>${e.Prix_Unitaire_HT?e.Prix_Unitaire_HT.toFixed(2)+'€':''}</td>
+        <td>${e.Prix_Unitaire_TTC?e.Prix_Unitaire_TTC.toFixed(2)+'€':''}</td>
+        <td><span class="badge badge-info">${nb}</span></td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="5">Aucun emballage</td></tr>';
+
+  // Sacs
+  document.getElementById('sacsTableBody').innerHTML =
+    data.sacs.map(s=>`
+      <tr>
+        <td>${s.Nom_Sac||''}</td>
+        <td>${s.Nom_Fournisseur||''}</td>
+        <td>${s.Prix_Unitaire_HT||0}€</td>
+        <td>${s.Prix_Unitaire_TTC||0}€</td>
+        <td>${s.TVA_Taux||'20'}%</td>
+      </tr>`).join('') || '<tr><td colspan="5">Aucun sac</td></tr>';
+
+  // Matières premières
+  document.getElementById('materialsTableBody').innerHTML =
+    data.matieres.map(m=>{
+      const sc = m.Statut==='Actif'?'success':'warning';
+      return `<tr>
+        <td>${m.Nom_MP||''}</td>
+        <td>${m.Categorie||''}</td>
+        <td>${m.Fournisseur||''}</td>
+        <td>${m.Prix_Achat_Unitaire_TTC?m.Prix_Achat_Unitaire_TTC.toFixed(2)+'€/'+m.Unite:''}</td>
+        <td>${m.Stock_Actuel||0} ${m.Unite||''}</td>
+        <td>${m.Valeur_Stock?m.Valeur_Stock.toFixed(2)+'€':''}</td>
+        <td><span class="badge badge-${sc}">${m.Statut||''}</span></td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="7">Aucune MP</td></tr>';
+}
+
+function updateStats(){
+  // Produits
+  const actifs=data.produits.filter(p=>p.Actif==='Oui').length;
+  const prixMoyen=data.produits.length? data.produits.reduce((a,p)=>a+(p.Prix_Vente_Unitaire_TTC||0),0)/data.produits.length:0;
+  document.getElementById('productStats').innerHTML=`
+    <div class="stat-card"><div class="stat-value">${data.produits.length}</div><div>Total Produits</div></div>
+    <div class="stat-card"><div class="stat-value">${actifs}</div><div>Produits Actifs</div></div>
+    <div class="stat-card"><div class="stat-value">${prixMoyen.toFixed(2)}€</div><div>Prix Moyen TTC</div></div>`;
+  // Emballages
+  const fU=[...new Set(data.emballages.map(e=>e.Nom_Fournisseur))].length;
+  document.getElementById('packagingStats').innerHTML=`
+    <div class="stat-card"><div class="stat-value">${data.emballages.length}</div><div>Total Emballages</div></div>
+    <div class="stat-card"><div class="stat-value">${data.sacs.length}</div><div>Types de Sacs</div></div>
+    <div class="stat-card"><div class="stat-value">${fU}</div><div>Fournisseurs</div></div>`;
+  // Matières
+  const valeurStock=data.matieres.reduce((a,m)=>a+(m.Valeur_Stock||0),0);
+  const cat=[...new Set(data.matieres.map(m=>m.Categorie))].length;
+  document.getElementById('materialsStats').innerHTML=`
+    <div class="stat-card"><div class="stat-value">${data.matieres.length}</div><div>Références MP</div></div>
+    <div class="stat-card"><div class="stat-value">${cat}</div><div>Catégories</div></div>
+    <div class="stat-card"><div class="stat-value">${(valeurStock/1000).toFixed(1)}k€</div><div>Valeur Stock</div></div>`;
+}
+
+window.onload=loadAllData;
+</script>
 </body>
 </html>
